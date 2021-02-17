@@ -84,12 +84,12 @@ local function new_csv_record(record)
     "",-- Length (unit) 	length 	20 	Parse only numbers.
     "",-- Width (unit) 	width 	20 	Parse only numbers.
     "",-- Height (unit) 	height 	20 	Parse only numbers.
-    "",-- Allow customer reviews? 	reviews_allowed 	1 	1 or 0
+    -- "",-- Allow customer reviews? 	reviews_allowed 	1 	1 or 0
     "",-- Purchase Note 	purchase_note 	Thanks for buying it buddy.
     0,-- Sale price 	sale_price 	20.99 	Sale price.
     0,-- Regular price 	regular_price 	24.99 	Regular price.
     record.categories,-- Categories 	category_ids 	Category 1, Category 1 > Category 2 	CSV list of categories. > used for hierarchy.
-    "",-- Tags 	tag_ids 	Tag 1, Tag 2 	CSV list of tags.
+    record.categories,-- Tags 	tag_ids 	Tag 1, Tag 2 	CSV list of tags.
     "",-- Shipping class 	shipping_class_id 	Name 	Name of shipping class
     "",-- Images 	image_id / gallery_image_ids 	http://somewhere.com/image.jpg, http://somewhere.com/image2.jpg 	First is featured image.
     "",-- Download limit 	download_limit 	1 	n/a or a limit.
@@ -160,7 +160,7 @@ local function make_categories(rec)
     elseif rec.signatura:match("^C") then
       categories = {"Hudba"}
     else
-      categories = {"Nezařazeno"}
+      categories = {"Nezařazené"}
     end
   end
   return table.concat(categories, ", ")
@@ -180,6 +180,7 @@ local function join_callnos(records)
     current.short = make_description(rec)
     current.description = ""
     current.categories = make_categories(rec)
+    current.id = rec.ck -- carovy kod je genialni ID. teda doufám
     newrecords[base] = current
   end
   return newrecords
@@ -207,9 +208,6 @@ local function sort(records)
     end
     return astart < bstart
   end)
-  for i, rec in ipairs(newrecords) do
-    rec.id = i
-  end
   return newrecords
 end
 
