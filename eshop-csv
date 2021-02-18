@@ -23,6 +23,21 @@ local function print_help()
   end
 end
 
+-- obrázky produktů
+-- vybíráme je náhodhně
+math.randomseed(os.time())
+-- ale zkusíme to nejdřív bez extension
+local image_extension = ""
+
+
+local images = {
+  "mikolaj-DCzpr09cTXY-unsplash",
+  "jonas-jacobsson-0FRJ2SCuY4k-unsplash",
+  "john-mark-smith-F_cHIM0Kcy4-unsplash",
+  "blaz-photo-zMRLZh40kms-unsplash",
+  "fang-wei-lin-H1IRUS1vEFA-unsplash"
+}
+
 
 
 if not input then 
@@ -59,6 +74,7 @@ local konspekt_groups = {
 "Literatura pro děti a mládež"
 }
 
+
 local field_names = '"ID ","Type ","SKU ","Name ","Published ","Is featured? ","Visibility in catalog ","Short description ","Description ","Date sale price starts ","Date sale price ends ","Tax status ","Tax class ","In stock? ","Stock ","Backorders allowed? ","Sold individually? ","Weight (lbs) ","Length (in) ","Width (in) ","Height (in) ","Allow customer reviews? ","Purchase note ","Sale price ","Regular price ","Categories ","Tags ","Shipping class ","Images ","Download limit ","Download expiry days ","Parent ","Grouped products ","Upsells ","Cross-sells ","External URL ","Button text ","Position ","Attribute 1 name ","Attribute 1 value(s) ","Attribute 1 visible ","Attribute 1 global ","Download 1 name ","Download 1 URL "'
 local function new_csv_record(record)
   local new = {
@@ -86,12 +102,12 @@ local function new_csv_record(record)
     "",-- Height (unit) 	height 	20 	Parse only numbers.
     -- "",-- Allow customer reviews? 	reviews_allowed 	1 	1 or 0
     "",-- Purchase Note 	purchase_note 	Thanks for buying it buddy.
-    0,-- Sale price 	sale_price 	20.99 	Sale price.
-    0,-- Regular price 	regular_price 	24.99 	Regular price.
+    5,-- Sale price 	sale_price 	20.99 	Sale price.
+    5,-- Regular price 	regular_price 	24.99 	Regular price.
     record.categories,-- Categories 	category_ids 	Category 1, Category 1 > Category 2 	CSV list of categories. > used for hierarchy.
     record.categories,-- Tags 	tag_ids 	Tag 1, Tag 2 	CSV list of tags.
     "",-- Shipping class 	shipping_class_id 	Name 	Name of shipping class
-    "",-- Images 	image_id / gallery_image_ids 	http://somewhere.com/image.jpg, http://somewhere.com/image2.jpg 	First is featured image.
+    images[math.random(#images)] .. image_extension,-- Images 	image_id / gallery_image_ids 	http://somewhere.com/image.jpg, http://somewhere.com/image2.jpg 	First is featured image.
     "",-- Download limit 	download_limit 	1 	n/a or a limit.
     "",-- Download expiry days 	download_expiry 	1 	n/a or a day limit.
     "",-- Parent 	parent_id 	id:100, SKU-1 	Set parent ID. Used for variations. Can be just a numeric ID e.g. id:100 or a SKU. Export will use SKU when possible.
