@@ -51,8 +51,8 @@ local images = {
   "emile-guillemot-TQJ_ERIEu00-unsplash", -- sociologie 18
   "alex-knight-2EJCSULRwC8-unsplash", -- techniky 19
   "fitsum-admasu-oGv9xIl7DkY-unsplash", -- tv 20
-  "jonathan-borba-Z1Oyw2snqn8-unsplash", -- vychova 21
   "sema-martin-f1rPr-sKI1s-unsplash", -- vv 22
+  "jonathan-borba-Z1Oyw2snqn8-unsplash", -- vychova 21
   "ilya-pavlov-OqtafYT5kTw-unsplash", -- it 23
   "roman-synkevych-fjj7lVpCxRE-unsplash", -- zemedelstvi 24
   "jilbert-ebrahimi-HAwA1N2gjo8-unsplash", -- beletrie 25
@@ -194,7 +194,7 @@ local function callnobase(callno)
 end
 
 local function make_name(rec)
-  return table.concat({rec.nazev, rec.autor}, ", ")
+  return table.concat({rec.nazev, rec.autor}, ", "):gsub("%s*,",","):gsub(",%s*$", "")
 end
 
 local function make_description(rec)
