@@ -31,13 +31,35 @@ local image_extension = ""
 
 
 local images = {
-  "mikolaj-DCzpr09cTXY-unsplash",
-  "jonas-jacobsson-0FRJ2SCuY4k-unsplash",
-  "john-mark-smith-F_cHIM0Kcy4-unsplash",
-  "blaz-photo-zMRLZh40kms-unsplash",
-  "fang-wei-lin-H1IRUS1vEFA-unsplash"
+  "michal-pechardo-q-1UsUeWHJ8-unsplash", -- antropologie 1
+  "joran-quinten-B2MofnIcxk4-unsplash", -- biologie 2
+  "kyle-head-p6rNTdAPbuk-unsplash", -- drama 3
+  "fabian-blank-pElSkGRA2NU-unsplash", -- ekonomie 4
+  "larisa-birta-77vhoasr6-c-unsplash", -- filosofie 5
+  "ehmitrich-ZGY5Pp8Xxaw-unsplash", -- fyzika 6
+  "fajruddin-mudzakkir-XXGDMRsOGBc-unsplash", -- geografie 7
+  "Rosaparks", -- historie 8
+  "c-d-x-PDX_a_82obo-unsplash", -- hudba 9
+  "thisisengineering-raeng-pl75Lsie3fg-unsplash", -- chemie 10
+  "siora-photography-VtNSaArmb-o-unsplash", -- lingvistika 11
+  "dan-dimmock-3mt71MKGjQ0-unsplash", -- informační vědy 12
+  "antoine-dautry-_zsL306fDck-unsplash", -- matematika 13
+  "christopher-boswell-GEzNsJarkGU-unsplash", -- lékařství 14
+  "element5-digital-T9CXBZLUvic-unsplash", -- politicke 15
+  "tingey-injury-law-firm-yCdPU73kGSc-unsplash", -- pravo 16
+  "roman-kraft-0EVKn3-5JSU-unsplash", -- psychologie 17
+  "emile-guillemot-TQJ_ERIEu00-unsplash", -- sociologie 18
+  "alex-knight-2EJCSULRwC8-unsplash", -- techniky 19
+  "fitsum-admasu-oGv9xIl7DkY-unsplash", -- tv 20
+  "jonathan-borba-Z1Oyw2snqn8-unsplash", -- vychova 21
+  "sema-martin-f1rPr-sKI1s-unsplash", -- vv 22
+  "ilya-pavlov-OqtafYT5kTw-unsplash", -- it 23
+  "roman-synkevych-fjj7lVpCxRE-unsplash", -- zemedelstvi 24
+  "jilbert-ebrahimi-HAwA1N2gjo8-unsplash", -- beletrie 25
+  "stephane-yaich-FvCJngDy2ao-unsplash", -- deti a mladez 26
 }
 
+local uncategorized_image = "michal-turkiewicz-Qr7uEfeU_t8-unsplash" -- nezařazené
 
 
 if not input then 
@@ -75,6 +97,22 @@ local konspekt_groups = {
 }
 
 
+local function get_image(rec)
+  local categories  = {}
+  -- konspekt looks like 8 * 11
+  -- we will work only with the first konspekt number, because
+  -- product can have only one image
+  local number =  rec.konspekt:match("(%d+)")
+  if number then return images[tonumber(number)] end
+  if rec.signatura:match("Be") then
+    return images[25] -- beletrie
+  elseif rec.signatura:match("^C") then
+    return images[9] -- hudba
+  else
+    return uncategorized_image
+  end
+end
+
 local field_names = '"ID ","Type ","SKU ","Name ","Published ","Is featured? ","Visibility in catalog ","Short description ","Description ","Date sale price starts ","Date sale price ends ","Tax status ","Tax class ","In stock? ","Stock ","Backorders allowed? ","Sold individually? ","Weight (lbs) ","Length (in) ","Width (in) ","Height (in) ","Allow customer reviews? ","Purchase note ","Sale price ","Regular price ","Categories ","Tags ","Shipping class ","Images ","Download limit ","Download expiry days ","Parent ","Grouped products ","Upsells ","Cross-sells ","External URL ","Button text ","Position ","Attribute 1 name ","Attribute 1 value(s) ","Attribute 1 visible ","Attribute 1 global ","Download 1 name ","Download 1 URL "'
 local function new_csv_record(record)
   local new = {
@@ -105,9 +143,10 @@ local function new_csv_record(record)
     5,-- Sale price 	sale_price 	20.99 	Sale price.
     5,-- Regular price 	regular_price 	24.99 	Regular price.
     record.categories,-- Categories 	category_ids 	Category 1, Category 1 > Category 2 	CSV list of categories. > used for hierarchy.
-    record.categories,-- Tags 	tag_ids 	Tag 1, Tag 2 	CSV list of tags.
+    record.signatura,-- Tags 	tag_ids 	Tag 1, Tag 2 	CSV list of tags.
     "",-- Shipping class 	shipping_class_id 	Name 	Name of shipping class
-    images[math.random(#images)] .. image_extension,-- Images 	image_id / gallery_image_ids 	http://somewhere.com/image.jpg, http://somewhere.com/image2.jpg 	First is featured image.
+    -- images[math.random(#images)] .. image_extension,-- Images 	image_id / gallery_image_ids 	http://somewhere.com/image.jpg, http://somewhere.com/image2.jpg 	First is featured image.
+    get_image(record),-- Images 	image_id / gallery_image_ids 	http://somewhere.com/image.jpg, http://somewhere.com/image2.jpg 	First is featured image.
     "",-- Download limit 	download_limit 	1 	n/a or a limit.
     "",-- Download expiry days 	download_expiry 	1 	n/a or a day limit.
     "",-- Parent 	parent_id 	id:100, SKU-1 	Set parent ID. Used for variations. Can be just a numeric ID e.g. id:100 or a SKU. Export will use SKU when possible.
@@ -160,7 +199,7 @@ end
 
 local function make_description(rec)
   -- udělat něco jako citaci. Je třeba odstranit chybnou diakritiku a neznámé roky vydání.
-  return table.concat({rec.autor, rec.nazev, rec.vydavatel, rec.rok, rec.isbn}, ". "):gsub("^%.%s*", ""):gsub("%s*%.", "."):gsub("%s*0000%.", "")
+  return table.concat({rec.autor, rec.nazev, rec.vydavatel, rec.rok, rec.isbn}, ". "):gsub("^%.%s*", ""):gsub("%s*%.", "."):gsub("%s*0000%.", "") .. "<br />Signatura: " .. rec.signatura
 end
 
 local function make_categories(rec)
