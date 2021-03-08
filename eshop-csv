@@ -221,6 +221,12 @@ local function make_categories(rec)
   return table.concat(categories, ", ")
 end
 
+local function fix_rok(old, new)
+  local is_invalid = function(rok) return rok == "0000" end
+  if is_invalid(old) then return new end
+  return old
+end
+
 -- sloučit záznamy s jednou signaturou do jednoho
 local function join_callnos(records)
   local newrecords = {}
@@ -231,8 +237,9 @@ local function join_callnos(records)
     -- step counter
     current.count = (current.count or 0) + 1
     current.signatura = base
-    current.name = make_name(rec)
-    current.short = make_description(rec)
+    current.rok = fix_rok(current.rok, rec.rok)
+    current.name = make_name(current)
+    current.short = make_description(current)
     current.description = ""
     current.categories = make_categories(rec)
     current.id = rec.ck -- carovy kod je genialni ID. teda doufám
