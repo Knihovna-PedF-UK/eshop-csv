@@ -195,12 +195,12 @@ local function callnobase(callno)
 end
 
 local function make_name(rec)
-  return table.concat({rec.nazev, rec.autor}, ", "):gsub("%s*,",","):gsub(",%s*$", "")
+  return table.concat({rec.nazev, rec.autor}, ", "):gsub("%s*,",","):gsub(",%s*$", ""):gsub('"', '')
 end
 
 local function make_description(rec)
   -- udělat něco jako citaci. Je třeba odstranit chybnou diakritiku a neznámé roky vydání.
-  return table.concat({rec.autor, rec.nazev, rec.vydavatel, rec.rok, rec.isbn}, ". "):gsub("^%.%s*", ""):gsub("%s*%.", "."):gsub("%s*0000%.", "") .. "<br />Signatura: " .. rec.signatura
+  return table.concat({rec.autor, rec.nazev, rec.vydavatel, rec.rok, rec.isbn}, ". "):gsub("^%.%s*", ""):gsub("%s*%.", "."):gsub("%s*0000%.", ""):gsub('"', "") .. "<br />Signatura: " .. rec.signatura
 end
 
 local function make_categories(rec)
@@ -235,6 +235,8 @@ local function join_callnos(records)
     -- print(rec.signatura)
     local base = callnobase(rec.signatura)
     local current = newrecords[base] or rec
+    -- remove quotes, they can cause CSV import to fail
+    current.nazev = current.nazev:gsub('"', '')
     -- step counter
     current.count = (current.count or 0) + 1
     current.signatura = base
