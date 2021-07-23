@@ -13,7 +13,7 @@ s požadovanými údaji.
 Nejdříve je třeba vygenerovat XML soubor z Alephu. Ve službě *Obecný formulář pro vyhledávání* zadáme následující hodnoty:
 
 - název: pedf_odpisy_YYYY_MM
-- sbírka: PEDFR PEDFC
+- dílčí knihovna: PEDFR PEDFC
 - status zpracování: VY 
 - datum odpisu: datum ve formátu DD/MM/YYYY
 
