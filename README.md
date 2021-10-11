@@ -8,7 +8,18 @@ Woocommerce umožňuje [import produktů k prodeji](https://docs.woocommerce.com
 pomocí CSV souborů. Tento skript zkonvertuje XML soubor vyexportovaný z Alephu na CSV
 s požadovanými údaji.
 
-# Postup
+# Postup v Almě
+
+Potřebujeme nový nástroj na zpracování XML z Almy: https://github.com/Knihovna-PedF-UK/alma-xml
+
+XML stáheme v modulu Analýzy. Vybereme výstup a úplně dole je možnost exportu dat, kde vybereme XML.
+
+Ten zpracujeme pomocí:
+
+     texlua alma-csv < xml_soubor > import.csv
+
+
+# Starý postup v Alephu
 
 Nejdříve je třeba vygenerovat XML soubor z Alephu. Ve službě *Obecný formulář pro vyhledávání* zadáme následující hodnoty:
 
