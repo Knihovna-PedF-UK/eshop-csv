@@ -16,8 +16,9 @@ XML stáheme v modulu Analýzy. Vybereme výstup a úplně dole je možnost expo
 
 Ten zpracujeme pomocí:
 
-     texlua alma-csv < xml_soubor > import.csv
+     texlua alma-csv cislo_odpisu < xml_soubor > import.csv
 
+Číslo odpisu je důležité, protože XML soubor obsahuje historii všech odpisů.
 
 # Starý postup v Alephu
 

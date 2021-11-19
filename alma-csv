@@ -10,6 +10,7 @@ local parser= require "parse_prir"
 parse_format_string = parser.parse_format_string
 parse_format = parser.parse_format
 edit = parser.edit
+local cislo_odpisu = arg[1]
 
 local input_text = io.read("*all")
 
@@ -21,7 +22,7 @@ local map = parser.field_map
 local function print_help()
   print "convert aleph xml to csv for moocommerce"
   print "Usage: "
-  print "  alma-csv < souborzalmy.xml "
+  print "  alma-csv cislo-odpisu < souborzalmy.xml "
 end
 
 -- obrázky produktů
@@ -291,6 +292,21 @@ local function get_csv_line(rec)
 end
 
 
+local function filter(records,cislo_odpisu)
+  -- odstranit zaznamy, ktere neodpovidaji cislu ubytku
+  local newrecords = {}
+  for k,v in ipairs(records) do
+    if cislo_odpisu and cislo_odpisu ~= "" then
+      if v.odpis == cislo_odpisu then
+        newrecords[#newrecords+1] = v
+      end
+    else
+      -- pokud jsme nepouzili cislo ubytku, vratime vsechny zaznamy
+      newrecords[#newrecords+1] = v
+    end
+  end
+  return newrecords
+end
 
 -- local source_format =  "ck,sysno,rok,signatura,druh,nazev,autor,vydavatel,lokace,status,dilci,popis,isbn,datum_odpisu,konspekt"
 -- local format = parser.parse_format(source_format) 
@@ -304,13 +320,15 @@ local dom = almaxml.load(input_text)
 local column_names = almaxml.get_colummn_names(dom)
 
 
+
 local remap = {
   Author = "autor", 
   Title = "nazev", 
   Publisher = "vydavatel", 
   ["Publication Date"] = "rok", 
   ["Item Call Number"] = "signatura",
-  Barcode = "ck"
+  Barcode = "ck",
+  ["Weeding Number"] = "odpis"
 }
 
 local records = almaxml.process(dom, column_names, remap)
@@ -323,6 +341,7 @@ local records = almaxml.process(dom, column_names, remap)
 
 
 -- local converted = convert(source_format, zaz) 
+records = filter(records, cislo_odpisu)
 local joined = join_callnos(records)
 local sorted = sort(joined)
 
